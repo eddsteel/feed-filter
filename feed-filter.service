@@ -1,0 +1,12 @@
+[Unit]
+Description=Feed filter service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker run -i --rm --name feed-filter -p 8080:8080 feed-filter:slice1
+ExecStop=/usr/bin/docker stop -t 2 feedfilter && /usr/bin/docker rm feed-filter
+
+[Install]
+WantedBy=local.target
