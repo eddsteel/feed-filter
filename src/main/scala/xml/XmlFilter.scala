@@ -71,23 +71,28 @@ object XmlFilter {
     new XmlFilter(source, filter)
 }
 
-case class XmlPartialOutput(
+final case class XmlPartialOutput(
   output: StringBuilder,
   itemInProgress: Option[StringBuilder],
   drop: Boolean) {
-  def complete = output.toString
-  def on = copy(drop = false)
-  def off = copy(drop = true)
-  def append(s: String) = itemInProgress match {
+
+  def complete: String = output.toString
+
+  def on: XmlPartialOutput = copy(drop = false)
+
+  def off: XmlPartialOutput = copy(drop = true)
+
+  def append(s: String): XmlPartialOutput = itemInProgress match {
     case Some(buf) =>
-      buf.append(s)
-      copy(itemInProgress = Some(buf))
+      copy(itemInProgress = Some(buf.append(s)))
     case None =>
       copy(output = output.append(s))
   }
 
-  def startItem = copy(itemInProgress = Some(new StringBuilder))
-  def endItem(filter: String => Boolean) = {
+  def startItem: XmlPartialOutput =
+    copy(itemInProgress = Some(new StringBuilder))
+
+  def endItem(filter: String => Boolean): XmlPartialOutput = {
     val item = itemInProgress.map(_.toString).getOrElse("")
     val addition =
       if (filter(item)) s"<item>$item</item>" // <foo>{bar}</foo> escapes

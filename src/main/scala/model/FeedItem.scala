@@ -1,7 +1,7 @@
 package com.eddsteel.feedfilter.model
 
 import java.net.URI
-import scala.util.{ Try, Failure }
+import scala.util.{ Try, Success, Failure }
 
 final case class FeedItem(
   id: String,
@@ -21,11 +21,14 @@ object FeedItem {
       href <- Try(new URI(link))
       description <- Try((xml \ "description").text)
     } yield FeedItem(id, title, href, description)
+
     safe.recoverWith {
       case e =>
         println(s"got $e when trying to parse $s")
         Failure(e)
+    } match {
+      case Success(fi) => fi
+      case Failure(e) => ???
     }
-    safe.get // FIX
   }
 }
