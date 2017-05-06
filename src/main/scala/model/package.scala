@@ -1,4 +1,3 @@
 package com.eddsteel.feedfilter
 
-package object model {
-}
+package object model {}

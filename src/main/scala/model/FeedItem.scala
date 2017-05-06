@@ -1,13 +1,9 @@
 package com.eddsteel.feedfilter.model
 
 import java.net.URI
-import scala.util.{ Try, Success, Failure }
+import scala.util.{Failure, Success, Try}
 
-final case class FeedItem(
-  id: String,
-  title: String,
-  href: URI,
-  description: String)
+final case class FeedItem(id: String, title: String, href: URI, description: String)
 
 object FeedItem {
   import scala.xml._

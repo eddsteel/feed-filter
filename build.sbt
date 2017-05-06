@@ -26,7 +26,6 @@ wartremoverExcluded += baseDirectory.value / "src" / "main" / "scala" / "run.sca
 def latestScalafmt = "0.7.0-RC1"
 commands += Command.args("scalafmt", "Run scalafmt cli.") {
   case (state, args) =>
-
     val Right(scalafmt) =
       org.scalafmt.bootstrap.ScalafmtBootstrap.fromVersion(latestScalafmt)
     scalafmt.main("--non-interactive" +: args.toArray)
@@ -34,7 +33,6 @@ commands += Command.args("scalafmt", "Run scalafmt cli.") {
 }
 commands += Command.args("scalafmtDiff", "Run scalafmt on changed files.") {
   case (state, args) =>
-
     val Right(scalafmt) =
       org.scalafmt.bootstrap.ScalafmtBootstrap.fromVersion(latestScalafmt)
     scalafmt.main("--non-interactive" +: "--diff" +: args.toArray)

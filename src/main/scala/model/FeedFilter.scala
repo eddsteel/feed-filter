@@ -10,13 +10,13 @@ final case class FeedFilter[A](
   extract: FeedItemExtractor[A],
   rule: FeedFilterRule[A]) {
 
-  require(! name.contains(' '))
+  require(!name.contains(' '))
 
   def itemFilter(source: String): Boolean = {
     val item = FeedItem.fromXML(source)
     val extracted = extract(item)
     val result = rule.include(extracted)
-    if (! result) println(s"SKIP $extracted")
+    if (!result) println(s"SKIP $extracted")
 
     result
   } // FIX error handling

@@ -4,10 +4,9 @@ import scala.io.Source
 import scala.xml._
 import scala.xml.pull._
 
-
 /** XML filtering is gross. Hidden here.
   */
-class XmlFilter private(source: String, itemFilter: String => Boolean) {
+class XmlFilter private (source: String, itemFilter: String => Boolean) {
 
   private def tag(pre: String, name: String) =
     if (Option(pre).exists(_.nonEmpty)) s"$pre:$name"
@@ -23,7 +22,8 @@ class XmlFilter private(source: String, itemFilter: String => Boolean) {
       case (x, EvElemStart(p, e @ "rss", as, ns)) =>
         x.append(s"<${tag(p, e)}${ns.toString}${as.toString}>")
 
-      case (x, EvElemStart(p, e @ "item", as, ns)) if (x.itemInProgress.isDefined || as.nonEmpty) =>
+      case (x, EvElemStart(p, e @ "item", as, ns))
+          if (x.itemInProgress.isDefined || as.nonEmpty) =>
         throw new RuntimeException("Yeearrgh")
 
       case (x, EvElemStart(p, e @ "item", as, ns)) =>
@@ -47,7 +47,7 @@ class XmlFilter private(source: String, itemFilter: String => Boolean) {
       case (x, node) =>
         println(node)
         x
-/*
+      /*
       case (x, EvComment(c)) =>
         x.append(Comment(c)).on
 
@@ -102,9 +102,7 @@ final case class XmlPartialOutput(
   }
 }
 
-
 object XmlPartialOutput {
   def empty: XmlPartialOutput =
-    XmlPartialOutput(
-      new StringBuilder("""<?xml version="1.0" encoding="UTF-8"?>"""), None, false)
+    XmlPartialOutput(new StringBuilder("""<?xml version="1.0" encoding="UTF-8"?>"""), None, false)
 }
