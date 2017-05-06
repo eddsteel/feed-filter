@@ -12,7 +12,7 @@ libraryDependencies += "javax.servlet" % "javax.servlet-api" % "3.1.0"
 libraryDependencies += "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106"
 
 wartremoverErrors ++= Warts.allBut(
-  Wart.Throw,   // until the EitherT update
+  Wart.Throw, // until the EitherT update
   Wart.Nothing, // ditto
   Wart.ImplicitParameter // not really an option with scala Futures.
 )
@@ -21,3 +21,22 @@ wartremoverErrors ++= Warts.allBut(
 wartremoverExcluded += baseDirectory.value / "src" / "main" / "scala" / "net" / "Jetty.scala"
 wartremoverExcluded += baseDirectory.value / "src" / "main" / "scala" / "net" / "Servlet.scala"
 wartremoverExcluded += baseDirectory.value / "src" / "main" / "scala" / "run.scala"
+
+// scalafmt for 0.13
+def latestScalafmt = "0.7.0-RC1"
+commands += Command.args("scalafmt", "Run scalafmt cli.") {
+  case (state, args) =>
+
+    val Right(scalafmt) =
+      org.scalafmt.bootstrap.ScalafmtBootstrap.fromVersion(latestScalafmt)
+    scalafmt.main("--non-interactive" +: args.toArray)
+    state
+}
+commands += Command.args("scalafmtDiff", "Run scalafmt on changed files.") {
+  case (state, args) =>
+
+    val Right(scalafmt) =
+      org.scalafmt.bootstrap.ScalafmtBootstrap.fromVersion(latestScalafmt)
+    scalafmt.main("--non-interactive" +: "--diff" +: args.toArray)
+    state
+}
