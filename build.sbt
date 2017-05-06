@@ -10,10 +10,9 @@ libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.0.6"
 libraryDependencies += "org.scalatra" %% "scalatra" % "2.5.0"
 libraryDependencies += "javax.servlet" % "javax.servlet-api" % "3.1.0"
 libraryDependencies += "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106"
+libraryDependencies += "org.typelevel" %% "cats" % "0.9.0"
 
 wartremoverErrors ++= Warts.allBut(
-  Wart.Throw, // until the EitherT update
-  Wart.Nothing, // ditto
   Wart.ImplicitParameter // not really an option with scala Futures.
 )
 

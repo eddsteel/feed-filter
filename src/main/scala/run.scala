@@ -11,7 +11,7 @@ object Main {
   def main(args: Array[String]): Unit =
     Await.result({
       Future.traverse(FeedFilters.allFeeds) { feed =>
-        val res = Proxying.proxy(feed)(ec)
+        val res = Proxying.proxy(feed)(ec).value
         res.foreach(println)
         res
       }

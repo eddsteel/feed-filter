@@ -1,4 +1,10 @@
-package com.eddsteel.feedfilter.xml
+package com.eddsteel.feedfilter
+package xml
+
+import model.Errors._
+import cats._
+import cats.data._
+import cats.implicits._
 
 import scala.io.Source
 import scala.xml._
@@ -6,68 +12,59 @@ import scala.xml.pull._
 
 /** XML filtering is gross. Hidden here.
   */
-class XmlFilter private (source: String, itemFilter: String => Boolean) {
+class XmlFilter private (source: String, itemFilter: String => Either[XmlFilteringError, Boolean]) {
+  import XmlFilter._
 
   private def tag(pre: String, name: String) =
     if (Option(pre).exists(_.nonEmpty)) s"$pre:$name"
     else name
 
-  def filter: String = {
+  def filter: Either[XmlFilteringError, String] = {
     val eventReader = new XMLEventReader(Source.fromString(source))
 
-    val out = eventReader.foldLeft(XmlPartialOutput.empty) {
-      case (x, EvProcInstr("xml", text)) =>
-        x.append(s"<?xml$text?>")
+    val out: IntermediateParse = eventReader.foldLeft(XmlPartialOutput.empty) {
+      case (l @ Left(_), _) => l
 
-      case (x, EvElemStart(p, e @ "rss", as, ns)) =>
-        x.append(s"<${tag(p, e)}${ns.toString}${as.toString}>")
+      case (r, EvProcInstr("xml", text)) =>
+        r.map(_.append(s"<?xml$text?>"))
 
-      case (x, EvElemStart(p, e @ "item", as, ns))
-          if (x.itemInProgress.isDefined || as.nonEmpty) =>
-        throw new RuntimeException("Yeearrgh")
+      case (r, EvElemStart(p, e @ "rss", as, ns)) =>
+        r.map(_.append(s"<${tag(p, e)}${ns.toString}${as.toString}>"))
 
-      case (x, EvElemStart(p, e @ "item", as, ns)) =>
-        x.startItem
+      case (r, EvElemStart(p, e @ "item", as, ns))
+          if (r.exists(_.itemInProgress.isDefined) || as.nonEmpty) =>
+        Left[XmlFilteringError, XmlPartialOutput](MalformedXML("item"))
 
-      case (x, EvElemEnd(p, e @ "item")) =>
-        x.endItem(itemFilter)
+      case (r, EvElemStart(p, e @ "item", as, ns)) =>
+        r.map(_.startItem)
 
-      case (x, EvElemStart(p, e, as, ns)) =>
-        x.append(s"<${tag(p, e)}${as.toString}>")
+      case (r, EvElemEnd(p, e @ "item")) =>
+        r.flatMap(_.endItem(itemFilter))
 
-      case (x, EvElemEnd(p, e)) =>
-        x.append(s"</${tag(p, e)}>")
+      case (r, EvElemStart(p, e, as, ns)) =>
+        r.map(_.append(s"<${tag(p, e)}${as.toString}>"))
 
-      case (x, EvText(t)) =>
-        x.append(t)
+      case (r, EvElemEnd(p, e)) =>
+        r.map(_.append(s"</${tag(p, e)}>"))
 
-      case (x, EvEntityRef(r)) =>
-        x.append(s"&$r;")
+      case (r, EvText(t)) =>
+        r.map(_.append(t))
 
-      case (x, node) =>
-        println(node)
-        x
-      /*
-      case (x, EvComment(c)) =>
-        x.append(Comment(c)).on
+      case (r, EvEntityRef(ref)) =>
+        r.map(_.append(s"&$ref;"))
 
-
-      case (x, a: Atom[_]) => ???
-      case (x, Comment(_)) => ???
-      case (x, d: Document) => ???
-      case (x, EntityRef(_)) => ???
-      case (x, p: PCData) => ???
-      case (x, ProcInstr(_, _)) => ???
-      case (x, t: Text) => ???
-      case (x, u: Unparsed) => ??? */
+      case (_, ev) =>
+        Left[XmlFilteringError, XmlPartialOutput](UnhandledStreamEvent(ev))
     }
 
-    out.complete
+    out.map(_.complete)
   }
 }
 
 object XmlFilter {
-  def apply(filter: String => Boolean)(source: String): XmlFilter =
+  type IntermediateParse = Either[XmlFilteringError, XmlPartialOutput]
+
+  def apply(filter: String => Either[XmlFilteringError, Boolean])(source: String): XmlFilter =
     new XmlFilter(source, filter)
 }
 
@@ -92,17 +89,19 @@ final case class XmlPartialOutput(
   def startItem: XmlPartialOutput =
     copy(itemInProgress = Some(new StringBuilder))
 
-  def endItem(filter: String => Boolean): XmlPartialOutput = {
+  def endItem(filter: String => Either[XmlFilteringError, Boolean]): Either[XmlFilteringError, XmlPartialOutput] = {
     val item = itemInProgress.map(_.toString).getOrElse("")
-    val addition =
-      if (filter(item)) s"<item>$item</item>" // <foo>{bar}</foo> escapes
-      else ""
+    filter(item).map {filtered =>
+      val addition =
+        if (filtered) s"<item>$item</item>" // <foo>{bar}</foo> escapes
+        else ""
 
-    copy(itemInProgress = None, output = output.append(addition))
+      copy(itemInProgress = None, output = output.append(addition))
+    }
   }
 }
 
 object XmlPartialOutput {
-  def empty: XmlPartialOutput =
-    XmlPartialOutput(new StringBuilder("""<?xml version="1.0" encoding="UTF-8"?>"""), None, false)
+  def empty: XmlFilter.IntermediateParse =
+    Right[XmlFilteringError, XmlPartialOutput](XmlPartialOutput(new StringBuilder("""<?xml version="1.0" encoding="UTF-8"?>"""), None, false))
 }

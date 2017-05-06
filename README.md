@@ -28,8 +28,8 @@ What configuration might look like (bear in mind):
           contains: \bTeaser\b
 ```
 
-## Slice 2: Wittertainment but only if it's Simon and Mark
-## Slice 3: Proper error handling with `EitherT`
+## Slice 2: Proper error handling with `EitherT`s
+## Slice 3: Wittertainment but only if it's Simon and Mark
 ## Slice 4: Configuration file for above
 ## Slice 5: Support partial get (pass through cache headers)
 

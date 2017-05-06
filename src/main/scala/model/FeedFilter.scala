@@ -1,5 +1,7 @@
 package com.eddsteel.feedfilter.model
 
+import Errors.FeedItemParseError
+
 import java.net.URI
 
 /** Represents a filter definition.
@@ -12,12 +14,12 @@ final case class FeedFilter[A](
 
   require(!name.contains(' '))
 
-  def itemFilter(source: String): Boolean = {
-    val item = FeedItem.fromXML(source)
-    val extracted = extract(item)
-    val result = rule.include(extracted)
-    if (!result) println(s"SKIP $extracted")
+  def itemFilter(source: String): Either[FeedItemParseError, Boolean] =
 
-    result
-  } // FIX error handling
+  for {
+    item <- FeedItem.fromXML(source)
+    extracted = extract(item)
+    result = rule.include(extracted)
+    _ = if (!result) println(s"SKIP $extracted")
+  } yield result
 }

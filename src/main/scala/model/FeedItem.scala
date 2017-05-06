@@ -1,5 +1,9 @@
 package com.eddsteel.feedfilter.model
 
+import Errors._
+import cats._
+import cats.implicits._
+import cats.data.{ NonEmptyList, Validated, ValidatedNel }
 import java.net.URI
 import scala.util.{Failure, Success, Try}
 
@@ -8,23 +12,26 @@ final case class FeedItem(id: String, title: String, href: URI, description: Str
 object FeedItem {
   import scala.xml._
 
-  def fromXML(s: String): FeedItem = {
-    val safe = for {
-      xml <- Try(XML.loadString(s"<root>$s</root>"))
-      id <- Try((xml \ "guid").text)
-      title <- Try((xml \ "title").text)
-      link <- Try((xml \ "link").text)
-      href <- Try(new URI(link))
-      description <- Try((xml \ "description").text)
-    } yield FeedItem(id, title, href, description)
+  type Parsed = Either[FeedItemParseError, FeedItem]
 
-    safe.recoverWith {
-      case e =>
-        println(s"got $e when trying to parse $s")
-        Failure(e)
-    } match {
-      case Success(fi) => fi
-      case Failure(e) => ???
+  private def handleSax[A](unsafeCall: => A): Validated[FeedItemParseError, A] =
+    Validated.fromTry(Try(unsafeCall)).leftMap(SaxProblem.apply)
+
+  def handleAttr[A](unsafeCall: => A)(key: String): ValidatedNel[XmlMarshalProblem, A] =
+    Validated.fromTry(Try(unsafeCall)).leftMap {
+      case a => AttributeMarshalProblem(key, None)
+    }.toValidatedNel[XmlMarshalProblem, A]
+
+  def fromXML(s: String): Parsed = {
+    val xml = handleSax(XML.loadString(s"<root>$s</root>")).toEither
+    xml.flatMap { doc =>
+      val validated = (handleAttr((doc \ "guid").text)("guid") |@|
+        handleAttr((doc \ "title").text)("title") |@|
+        handleAttr((doc \ "link").text)("link").map(new URI(_)) |@|
+        handleAttr((doc \ "description").text)("description")).map(FeedItem.apply _)
+
+      val end: Parsed = validated.leftMap(FeedItemMarshalError.apply).toEither
+      end
     }
   }
 }
