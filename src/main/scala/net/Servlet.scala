@@ -18,12 +18,13 @@ object Servlet extends ScalatraServlet with FutureSupport {
 
   get("/feed/:name") {
     feeds.get(params("name")) match {
-      case Some(feed) => Proxying.proxy(feed).value.map {
-        case Right(result) => Ok(result)
-        case Left(l) =>
-          println(l)
-          InternalServerError("nuh")
-      }
+      case Some(feed) =>
+        Proxying.proxy(feed).value.map {
+          case Right(result) => Ok(result)
+          case Left(l) =>
+            println(l)
+            InternalServerError("nuh")
+        }
       case None => Future.successful(NotFound("File Not Found"))
     }
   }

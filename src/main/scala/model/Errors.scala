@@ -21,8 +21,10 @@ object Errors {
 
   sealed trait FeedItemParseError extends XmlFilteringError
   final case class SaxProblem(t: Throwable) extends FeedItemParseError
-  final case class FeedItemMarshalError(problems: NonEmptyList[XmlMarshalProblem]) extends FeedItemParseError
+  final case class FeedItemMarshalError(problems: NonEmptyList[XmlMarshalProblem])
+      extends FeedItemParseError
 
   sealed trait XmlMarshalProblem
-  final case class AttributeMarshalProblem(key: String, value: Option[String]) extends XmlMarshalProblem
+  final case class AttributeMarshalProblem(key: String, value: Option[String])
+      extends XmlMarshalProblem
 }

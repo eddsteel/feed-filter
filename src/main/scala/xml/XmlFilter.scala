@@ -89,9 +89,10 @@ final case class XmlPartialOutput(
   def startItem: XmlPartialOutput =
     copy(itemInProgress = Some(new StringBuilder))
 
-  def endItem(filter: String => Either[XmlFilteringError, Boolean]): Either[XmlFilteringError, XmlPartialOutput] = {
+  def endItem(filter: String => Either[XmlFilteringError, Boolean])
+    : Either[XmlFilteringError, XmlPartialOutput] = {
     val item = itemInProgress.map(_.toString).getOrElse("")
-    filter(item).map {filtered =>
+    filter(item).map { filtered =>
       val addition =
         if (filtered) s"<item>$item</item>" // <foo>{bar}</foo> escapes
         else ""
@@ -103,5 +104,9 @@ final case class XmlPartialOutput(
 
 object XmlPartialOutput {
   def empty: XmlFilter.IntermediateParse =
-    Right[XmlFilteringError, XmlPartialOutput](XmlPartialOutput(new StringBuilder("""<?xml version="1.0" encoding="UTF-8"?>"""), None, false))
+    Right[XmlFilteringError, XmlPartialOutput](
+      XmlPartialOutput(
+        new StringBuilder("""<?xml version="1.0" encoding="UTF-8"?>"""),
+        None,
+        false))
 }

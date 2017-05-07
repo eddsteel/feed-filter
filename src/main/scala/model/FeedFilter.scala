@@ -15,11 +15,10 @@ final case class FeedFilter[A](
   require(!name.contains(' '))
 
   def itemFilter(source: String): Either[FeedItemParseError, Boolean] =
-
-  for {
-    item <- FeedItem.fromXML(source)
-    extracted = extract(item)
-    result = rule.include(extracted)
-    _ = if (!result) println(s"SKIP $extracted")
-  } yield result
+    for {
+      item <- FeedItem.fromXML(source)
+      extracted = extract(item)
+      result = rule.include(extracted)
+      _ = if (!result) println(s"SKIP $extracted")
+    } yield result
 }

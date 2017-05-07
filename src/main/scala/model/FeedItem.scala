@@ -3,7 +3,7 @@ package com.eddsteel.feedfilter.model
 import Errors._
 import cats._
 import cats.implicits._
-import cats.data.{ NonEmptyList, Validated, ValidatedNel }
+import cats.data.{NonEmptyList, Validated, ValidatedNel}
 import java.net.URI
 import scala.util.{Failure, Success, Try}
 
@@ -18,9 +18,12 @@ object FeedItem {
     Validated.fromTry(Try(unsafeCall)).leftMap(SaxProblem.apply)
 
   def handleAttr[A](unsafeCall: => A)(key: String): ValidatedNel[XmlMarshalProblem, A] =
-    Validated.fromTry(Try(unsafeCall)).leftMap {
-      case a => AttributeMarshalProblem(key, None)
-    }.toValidatedNel[XmlMarshalProblem, A]
+    Validated
+      .fromTry(Try(unsafeCall))
+      .leftMap {
+        case a => AttributeMarshalProblem(key, None)
+      }
+      .toValidatedNel[XmlMarshalProblem, A]
 
   def fromXML(s: String): Parsed = {
     val xml = handleSax(XML.loadString(s"<root>$s</root>")).toEither
