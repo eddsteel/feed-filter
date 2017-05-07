@@ -3,7 +3,12 @@ scalaVersion := "2.12.2"
 organization := "eddsteel"
 version := "slice2-SNAPSHOT"
 
-mainClass in Compile := Some("com.eddsteel.feedfilter.net.Jetty")
+List(
+  Compile -> "com.eddsteel.feedfilter.net.Jetty",
+  Test -> "com.eddsteel.feedfilter.Main").map {
+  case (scope, main) =>
+    mainClass in scope := Some(main)
+}
 
 libraryDependencies += "org.scalaj" %% "scalaj-http" % "2.3.0"
 libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.0.6"

@@ -12,7 +12,7 @@ object Main {
     Await.result({
       Future.traverse(FeedFilters.allFeeds) { feed =>
         val res = Proxying.proxy(feed)(ec).value
-        res.foreach(println)
+//        res.foreach(println)
         res
       }
     }, 10 seconds)
