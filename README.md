@@ -34,6 +34,13 @@ No need to throw exceptions like an animal. Haven't bothered with any
 aliases yet. Added wart remover and scalafmt too.
 
 ## Slice 3: Wittertainment but only if it's Simon and Mark
+
+Are the abstractions right? To test filter out Five Live movie reviews
+when Simon or Mark aren't there. That's not really wittertainment.
+
+This just filters for `/sit(ting)? in for (Simon|Mark)/` in feed
+description, which seems to catch the right ones.
+
 ## Slice 4: Configuration file for above
 ## Slice 5: Support partial get (pass through cache headers)
 
