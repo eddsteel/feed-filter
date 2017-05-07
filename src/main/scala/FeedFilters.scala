@@ -11,6 +11,6 @@ object FeedFilters {
         name = "chapo",
         src = new URI("http://feeds.soundcloud.com/users/soundcloud:users:211911700/sounds.rss"),
         extract = FeedItemExtractor.title,
-        rule = FilterNotRule(ContainsMatcher("""\bTeaser\b""".r).test)
+        rule = FilterNotRule(ContainsMatcher("""\bteaser\b""".r).test)
       ))
 }

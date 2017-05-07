@@ -12,5 +12,8 @@ object FeedItemExtractor {
     }
 
   def title: FeedItemExtractor[String] =
-    FeedItemExtractor(_.title)
+    FeedItemExtractor(_.title.toLowerCase)
+
+  def description: FeedItemExtractor[String] =
+    FeedItemExtractor(_.description.toLowerCase)
 }
