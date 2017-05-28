@@ -1,7 +1,7 @@
 name := "feed-filter"
 scalaVersion := "2.12.2"
 organization := "eddsteel"
-version := "slice3"
+version := "slice4"
 
 List(
   Compile -> "com.eddsteel.feedfilter.net.Jetty",

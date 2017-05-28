@@ -5,7 +5,7 @@ After=docker.service
 
 [Service]
 Restart=always
-ExecStart=/usr/bin/docker run -i --rm --name feed-filter -p 8080:8080 feed-filter:slice3
+ExecStart=/usr/bin/docker run -i --rm --name feed-filter -p 8080:8080 feed-filter:slice4
 ExecStop=/usr/bin/docker stop -t 2 feedfilter && /usr/bin/docker rm feed-filter
 
 [Install]

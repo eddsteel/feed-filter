@@ -41,7 +41,7 @@ when Simon or Mark aren't there. That's not really wittertainment.
 This just filters for `/sit(s|ting)? in for (Simon|Mark)/` in feed
 description, which seems to catch the right ones.
 
-## Slice 4: Support redirects
+## ~~Slice 4: Support redirects~~
 
 Support redirects, and it's about time we use proper logging.
 

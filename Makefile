@@ -1,4 +1,4 @@
-VERSION:=slice3
+VERSION:=slice4
 
 container:
 	sbt docker:publishLocal
