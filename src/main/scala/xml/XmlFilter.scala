@@ -2,8 +2,6 @@ package com.eddsteel.feedfilter
 package xml
 
 import model.Errors._
-import cats._
-import cats.data._
 import cats.implicits._
 
 import scala.io.Source
@@ -31,17 +29,17 @@ class XmlFilter private (source: String, itemFilter: String => Either[XmlFilteri
       case (r, EvElemStart(p, e @ "rss", as, ns)) =>
         r.map(_.append(s"<${tag(p, e)}${ns.toString}${as.toString}>"))
 
-      case (r, EvElemStart(p, e @ "item", as, ns))
+      case (r, EvElemStart(_, e @ "item", as, _))
           if (r.exists(_.itemInProgress.isDefined) || as.nonEmpty) =>
         Left[XmlFilteringError, XmlPartialOutput](MalformedXML("item"))
 
-      case (r, EvElemStart(p, e @ "item", as, ns)) =>
+      case (r, EvElemStart(_, e @ "item", _, _)) =>
         r.map(_.startItem)
 
-      case (r, EvElemEnd(p, e @ "item")) =>
+      case (r, EvElemEnd(_, e @ "item")) =>
         r.flatMap(_.endItem(itemFilter))
 
-      case (r, EvElemStart(p, e, as, ns)) =>
+      case (r, EvElemStart(p, e, as, _)) =>
         r.map(_.append(s"<${tag(p, e)}${as.toString}>"))
 
       case (r, EvElemEnd(p, e)) =>

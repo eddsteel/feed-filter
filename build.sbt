@@ -42,3 +42,5 @@ commands += Command.args("scalafmtDiff", "Run scalafmt on changed files.") {
     scalafmt.main("--non-interactive" +: "--diff" +: args.toArray)
     state
 }
+scalacOptions ++= Flags.scalacOptions
+scalacOptions in (Compile, console) ~= (_.filterNot(Flags.consoleIgnores))

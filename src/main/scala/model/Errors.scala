@@ -12,6 +12,7 @@ object Errors {
   sealed trait FetchError extends ProxyError
   final case class NotFoundError(url: URI) extends FetchError
   final case class ServerFailedError(reason: String) extends FetchError
+  final case class TooManyRedirects(uri: URI) extends FetchError
   final case class UnhandledHttpCodeError(code: Int) extends FetchError
   final case class UnhandledFetchError(cause: Throwable) extends FetchError
 

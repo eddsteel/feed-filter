@@ -8,12 +8,14 @@ import scala.language.postfixOps
 object Main {
   private implicit val ec = ExecutionContext.global
 
-  def main(args: Array[String]): Unit =
-    Await.result({
+  def main(args: Array[String]): Unit = {
+    val _ = Await.result({
       Future.traverse(FeedFilters.allFeeds) { feed =>
         val res = Proxying.proxy(feed)(ec).value
 //        res.foreach(println)
         res
       }
     }, 10 seconds)
+    ()
+  }
 }
