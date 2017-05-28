@@ -16,6 +16,8 @@ libraryDependencies += "org.scalatra" %% "scalatra" % "2.5.0"
 libraryDependencies += "javax.servlet" % "javax.servlet-api" % "3.1.0"
 libraryDependencies += "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106"
 libraryDependencies += "org.typelevel" %% "cats" % "0.9.0"
+libraryDependencies += "org.log4s" %% "log4s" % "1.3.4"
+libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.7.5"
 
 wartremoverErrors ++= Warts.allBut(
   Wart.ImplicitParameter // not really an option with scala Futures.

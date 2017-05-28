@@ -15,7 +15,7 @@ import scala.util.Try
 import java.net.URI
 
 object Proxying {
-
+  private val logger = org.log4s.getLogger
   type FetchResult[A] = EitherT[Future, FetchError, A]
 
   def proxy(feedFilter: FeedFilter[_])(
@@ -25,7 +25,7 @@ object Proxying {
     }
 
   def fetch(u: URI, chainLength: Int)(implicit ec: ExecutionContext): FetchResult[String] = {
-    println(s"FETCH $u")
+    logger.info(s"FETCH $u")
     def left(e: FetchError): EitherT[Future, FetchError, String] =
       EitherT.left(Future.successful(e))
 

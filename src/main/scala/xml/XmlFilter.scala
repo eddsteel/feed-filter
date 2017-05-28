@@ -1,6 +1,7 @@
 package com.eddsteel.feedfilter
 package xml
 
+import model.FeedItem
 import model.Errors._
 import cats.implicits._
 
@@ -10,7 +11,7 @@ import scala.xml.pull._
 
 /** XML filtering is gross. Hidden here.
   */
-class XmlFilter private (source: String, itemFilter: String => Either[XmlFilteringError, Boolean]) {
+class XmlFilter private (source: String, itemFilter: FeedItem => Boolean) {
   import XmlFilter._
 
   private def tag(pre: String, name: String) =
@@ -37,7 +38,7 @@ class XmlFilter private (source: String, itemFilter: String => Either[XmlFilteri
         r.map(_.startItem)
 
       case (r, EvElemEnd(_, e @ "item")) =>
-        r.flatMap(_.endItem(itemFilter))
+        r.flatMap(_.endItem(s => FeedItem.fromXML(s).map(itemFilter)))
 
       case (r, EvElemStart(p, e, as, _)) =>
         r.map(_.append(s"<${tag(p, e)}${as.toString}>"))
@@ -62,7 +63,7 @@ class XmlFilter private (source: String, itemFilter: String => Either[XmlFilteri
 object XmlFilter {
   type IntermediateParse = Either[XmlFilteringError, XmlPartialOutput]
 
-  def apply(filter: String => Either[XmlFilteringError, Boolean])(source: String): XmlFilter =
+  def apply(filter: FeedItem => Boolean)(source: String): XmlFilter =
     new XmlFilter(source, filter)
 }
 
