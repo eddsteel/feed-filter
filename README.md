@@ -42,6 +42,9 @@ This just filters for `/sit(s|ting)? in for (Simon|Mark)/` in feed
 description, which seems to catch the right ones.
 
 ## Slice 4: Support redirects
+
+Support redirects, and it's about time we use proper logging.
+
 ## Slice 5: Configuration file for above
 ## Slice 6: Support partial get (pass through cache headers)
 
