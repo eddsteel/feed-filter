@@ -1,11 +1,11 @@
 package com.eddsteel.feedfilter
 package net
 
-import scalaj.http.HttpResponse
 import xml.XmlFilter
 import model.FeedFilter
 import model.Errors._
 
+import cats.Show
 import cats.data._
 import cats.implicits._
 import scalaj.http._
@@ -18,10 +18,11 @@ object Proxying {
   private val logger = org.log4s.getLogger
   type FetchResult[A] = EitherT[Future, FetchError, A]
 
-  def proxy(feedFilter: FeedFilter[_])(
+  def proxy[A: Show](feedFilter: FeedFilter[A])(
     implicit ec: ExecutionContext): EitherT[Future, ProxyError, String] =
     fetch(feedFilter.src, 0).flatMap { s =>
-      EitherT(Future.successful(XmlFilter(feedFilter.itemFilter)(s).filter))
+      EitherT(Future.successful(
+        XmlFilter(ItemFilter.filterItem(_, feedFilter))(s).filter))
     }
 
   def fetch(u: URI, chainLength: Int)(implicit ec: ExecutionContext): FetchResult[String] = {
