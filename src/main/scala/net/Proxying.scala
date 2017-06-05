@@ -21,8 +21,7 @@ object Proxying {
   def proxy[A: Show](feedFilter: FeedFilter[A])(
     implicit ec: ExecutionContext): EitherT[Future, ProxyError, String] =
     fetch(feedFilter.src, 0).flatMap { s =>
-      EitherT(Future.successful(
-        XmlFilter(ItemFilter.filterItem(_, feedFilter))(s).filter))
+      EitherT(Future.successful(XmlFilter(ItemFilter.filterItem(_, feedFilter))(s).filter))
     }
 
   def fetch(u: URI, chainLength: Int)(implicit ec: ExecutionContext): FetchResult[String] = {
@@ -49,10 +48,11 @@ object Proxying {
             case 301 =>
               val nextLocation =
                 for {
-                  location <- resp.header("Location").toRight(
-                    ServerFailedError("301 with no Location"))
-                  validLocation <- Try(new URI(location)).toOption.toRight(
-                    ServerFailedError("301 with invalid Location"))
+                  location <- resp
+                    .header("Location")
+                    .toRight(ServerFailedError("301 with no Location"))
+                  validLocation <- Try(new URI(location)).toOption
+                    .toRight(ServerFailedError("301 with invalid Location"))
                 } yield validLocation
 
               nextLocation.fold(left, fetch(_, chainLength + 1))

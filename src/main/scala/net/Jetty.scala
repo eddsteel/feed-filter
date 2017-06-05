@@ -14,7 +14,7 @@ object Jetty {
       val ctx = new WebAppContext()
       ctx.setContextPath("/")
       ctx.setResourceBase("src/main/resources")
-      ctx.setResourceBase(getClass.getClassLoader.getResource("WEB-INF").toExternalForm())
+      ctx.setResourceBase(getClass.getClassLoader.getResource("WEB-INF").toExternalForm)
       ctx.setInitParameter(
         ScalatraListener.LifeCycleKey,
         "com.eddsteel.feedfilter.net.ScalatraBootstrap")
