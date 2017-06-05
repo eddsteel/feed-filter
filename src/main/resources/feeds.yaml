@@ -1,0 +1,14 @@
+---
+- name: chapo
+  src: http://feeds.soundcloud.com/users/soundcloud:users:211911700/sounds.rss
+  extract: title
+  rule:
+    type: filter-not
+    matcher: "\\bteaser\\b"
+
+- name: wittertainment
+  src: http://www.bbc.co.uk/programmes/b00lvdrj/episodes/downloads.rss
+  extract: description
+  rule:
+    type: filter-not
+    matcher: "\\bsit(s|ting)? in for (mark|simon|kermode|mayo)\\b| presents "

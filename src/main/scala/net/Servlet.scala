@@ -14,9 +14,15 @@ object Servlet extends ScalatraServlet with FutureSupport {
   implicit val ec: ExecutionContext = executor
   private val logger = org.log4s.getLogger
 
-  private val feeds = FeedFilters.allFeeds.map { ff =>
-    ff.name -> ff
-  }.toMap
+  private val feeds: Map[String, FeedFilter[String]] = FeedFilters.allFeeds match {
+    case Right(feeds) =>
+      feeds.map { ff =>
+        ff.name -> ff
+      }.toMap
+    case Left(errors) =>
+      logger.error(s"BAIL $errors")
+      sys.error(s"BAIL $errors")
+  }
 
   get("/feed/:name") {
     val feedName = params("name")

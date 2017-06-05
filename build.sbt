@@ -1,11 +1,9 @@
 name := "feed-filter"
 scalaVersion := "2.12.2"
 organization := "eddsteel"
-version := "slice4"
+version := "slice5"
 
-List(
-  Compile -> "com.eddsteel.feedfilter.net.Jetty",
-  Test -> "com.eddsteel.feedfilter.Main").map {
+List(Compile -> "com.eddsteel.feedfilter.net.Jetty", Test -> "com.eddsteel.feedfilter.Main").map {
   case (scope, main) =>
     mainClass in scope := Some(main)
 }
@@ -18,8 +16,9 @@ libraryDependencies += "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106"
 libraryDependencies += "org.typelevel" %% "cats" % "0.9.0"
 libraryDependencies += "org.log4s" %% "log4s" % "1.3.4"
 libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.7.5"
+libraryDependencies += "net.jcazevedo" %% "moultingyaml" % "0.4.0"
 
-wartremoverErrors ++= Warts.allBut(
+wartremoverErrors in (Compile, compile) ++= Warts.allBut(
   Wart.ImplicitParameter // not really an option with scala Futures.
 )
 

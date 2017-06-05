@@ -1,4 +1,5 @@
-package com.eddsteel.feedfilter.model
+package com.eddsteel.feedfilter
+package model
 
 import cats.Show
 import java.net.URI

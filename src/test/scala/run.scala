@@ -9,10 +9,14 @@ object Main {
   private implicit val ec = ExecutionContext.global
 
   def main(args: Array[String]): Unit = {
+    val feeds = FeedFilter.allFeeds match {
+      case Left(errors) => sys.error(errors)
+      case Right(fs) => fs
+    }
+
     val _ = Await.result({
-      Future.traverse(FeedFilters.allFeeds) { feed =>
+      Future.traverse(feeds) { feed =>
         val res = Proxying.proxy(feed)(ec).value
-//        res.foreach(println)
         res
       }
     }, 10 seconds)

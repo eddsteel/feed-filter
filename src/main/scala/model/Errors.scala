@@ -28,4 +28,11 @@ object Errors {
   sealed trait XmlMarshalProblem
   final case class AttributeMarshalProblem(key: String, value: Option[String])
       extends XmlMarshalProblem
+
+  sealed trait ConfigParseError extends Product with Serializable
+  final case class UnknownFeedItemExtractor(given: String) extends ConfigParseError
+  final case class MissingFeedFilterRuleField(required: String) extends ConfigParseError
+  final case class UnknownFeedFilterRule(given: Map[String, String]) extends ConfigParseError
+  final case class ConfigLoadError(t: Throwable) extends ConfigParseError
+  final case class YamlParseError(t: Throwable) extends ConfigParseError
 }
