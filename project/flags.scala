@@ -1,7 +1,13 @@
-// tpolecat's list from https://tpolecat.github.io/2017/04/25/scalac-flags.html
+import sbt._
+import sbt.Keys._
 
 object Flags {
-  val scalacOptions = Seq(
+  def settings: Seq[Setting[_]] = Seq(
+    scalacOptions ++= compileFlags,
+    scalacOptions in (Compile, console) ~= (_.filterNot(Flags.consoleIgnores)))
+
+  // tpolecat's list from https://tpolecat.github.io/2017/04/25/scalac-flags.html
+  val compileFlags = Seq(
     "-deprecation", // Emit warning and location for usages of deprecated APIs.
     "-encoding",
     "utf-8", // Specify character encoding used by source files.

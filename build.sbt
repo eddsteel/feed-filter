@@ -18,14 +18,5 @@ libraryDependencies += "org.log4s" %% "log4s" % "1.3.4"
 libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.7.5"
 libraryDependencies += "net.jcazevedo" %% "moultingyaml" % "0.4.0"
 
-wartremoverErrors in (Compile, compile) ++= Warts.allBut(
-  Wart.ImplicitParameter // not really an option with scala Futures.
-)
-
-// the bad place
-wartremoverExcluded += baseDirectory.value / "src" / "main" / "scala" / "net" / "Jetty.scala"
-wartremoverExcluded += baseDirectory.value / "src" / "main" / "scala" / "net" / "Servlet.scala"
-wartremoverExcluded += baseDirectory.value / "src" / "main" / "scala" / "run.scala"
-
-scalacOptions ++= Flags.scalacOptions
-scalacOptions in (Compile, console) ~= (_.filterNot(Flags.consoleIgnores))
+Lint.settings
+Flags.settings
