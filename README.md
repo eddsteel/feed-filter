@@ -4,6 +4,8 @@ Proxy atom feeds, applying filters to their contents. Filter out
 items, but include all original data for the channel, and all
 remaining items.
 
+[![Build Status](https://travis-ci.org/eddsteel/feed-filter.svg?branch=master)](https://travis-ci.org/eddsteel/feed-filter)
+
 ## ~~Slice 1: Chapo Trap House without teasers~~
 
 To test the idea. Provide the Chapo feed but no teasers because I'm a paid up grey wolf.
