@@ -1,4 +1,7 @@
-VERSION:=slice5
+VERSION:=$(shell grep -E '^version +:=' build.sbt | cut -f 2 -d'"')
+
+version:
+	@echo ${VERSION}
 
 container:
 	sbt docker:publishLocal
