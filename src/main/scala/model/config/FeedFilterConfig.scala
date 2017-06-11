@@ -9,23 +9,17 @@ import java.net.URI
 import scala.util.matching.Regex
 import scala.util.Try
 
-final case class FeedConfig(
-  name: String,
-  src: URI,
-  extract: ExtractorChoice,
-  rule: RuleConfig) {
+final case class FeedConfig(name: String, src: URI, extract: ExtractorChoice, rule: RuleConfig) {
 
   def toFeedFilter: FeedFilter[String] = // let's punt on abstracting over this type
     FeedFilter(name, src, extract.toExtractor, rule.toRule)
 }
 
-sealed trait ExtractorChoice { def toExtractor: FeedItemExtractor[String]}
+sealed trait ExtractorChoice { def toExtractor: FeedItemExtractor[String] }
 final object ExtractorChoice {
   @SuppressWarnings(Array("org.wartremover.warts.Product", "org.wartremover.warts.Serializable"))
   private val choices: Map[String, ExtractorChoice] =
-    Map(
-      "title" -> TitleExtractorChoice,
-      "description" -> DescriptionExtractorChoice)
+    Map("title" -> TitleExtractorChoice, "description" -> DescriptionExtractorChoice)
 
   def fromString(name: String): Option[ExtractorChoice] =
     choices.get(name)
@@ -51,10 +45,11 @@ final object RuleConfig {
     } yield (`type`, fvs)
 
     fieldValues.flatMap {
-      case ("filter-not", Seq(("matcher", Some(m)))) => for {
-        pattern <- Try(m.r).toOption
-        config <- Some(FilterNotMatchRuleConfig(pattern))
-      } yield config
+      case ("filter-not", Seq(("matcher", Some(m)))) =>
+        for {
+          pattern <- Try(m.r).toOption
+          config <- Some(FilterNotMatchRuleConfig(pattern))
+        } yield config
     }
   }
 }

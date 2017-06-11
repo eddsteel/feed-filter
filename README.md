@@ -45,11 +45,12 @@ description, which seems to catch the right ones.
 
 Support redirects, and it's about time we use proper logging.
 
-## Slice 5: Configuration file for above
+## ~~Slice 5: Configuration file for above~~
 ## Slice 6: Support partial get (pass through cache headers)
 
 
 ## Notes
 
 Main thing is not to lose information, so can't use a library that
-normalises feeds in some way (e.g. ROME).
+normalises feeds in some way (e.g. ROME). Instead we parse enough XML
+to get items out, and apply filters to them.

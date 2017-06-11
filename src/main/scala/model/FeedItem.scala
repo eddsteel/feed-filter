@@ -22,7 +22,6 @@ object FeedItem {
       .leftMap(_ => AttributeMarshalProblem(key, None))
       .toValidatedNel[XmlMarshalProblem, A]
 
-
   @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
   def fromXML(s: String): Parsed = {
     val xml = handleSax(XML.loadString(s"<root>$s</root>")).toEither

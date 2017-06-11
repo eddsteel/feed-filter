@@ -27,21 +27,5 @@ wartremoverExcluded += baseDirectory.value / "src" / "main" / "scala" / "net" / 
 wartremoverExcluded += baseDirectory.value / "src" / "main" / "scala" / "net" / "Servlet.scala"
 wartremoverExcluded += baseDirectory.value / "src" / "main" / "scala" / "run.scala"
 
-// scalafmt for 0.13
-def latestScalafmt = "0.7.0-RC1"
-commands += Command.args("scalafmt", "Run scalafmt cli.") {
-  case (state, args) =>
-    val Right(scalafmt) =
-      org.scalafmt.bootstrap.ScalafmtBootstrap.fromVersion(latestScalafmt)
-    scalafmt.main("--non-interactive" +: args.toArray)
-    state
-}
-commands += Command.args("scalafmtDiff", "Run scalafmt on changed files.") {
-  case (state, args) =>
-    val Right(scalafmt) =
-      org.scalafmt.bootstrap.ScalafmtBootstrap.fromVersion(latestScalafmt)
-    scalafmt.main("--non-interactive" +: "--diff" +: args.toArray)
-    state
-}
 scalacOptions ++= Flags.scalacOptions
 scalacOptions in (Compile, console) ~= (_.filterNot(Flags.consoleIgnores))
