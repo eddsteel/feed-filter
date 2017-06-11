@@ -46,7 +46,8 @@ description, which seems to catch the right ones.
 Support redirects, and it's about time we use proper logging.
 
 ## ~~Slice 5: Configuration file for above~~
-## Slice 6: Support partial get (pass through cache headers)
+## ~~Slice 6: Build improvements~~
+## Slice 7: Support partial get (pass through cache headers)
 
 
 ## Notes
