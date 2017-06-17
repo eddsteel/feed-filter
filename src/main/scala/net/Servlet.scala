@@ -1,7 +1,7 @@
 package com.eddsteel.feedfilter
 package net
 
-import model.{ConditionalGetHeader, FeedFilter}
+import model._
 import model.Errors._
 
 import cats.implicits._

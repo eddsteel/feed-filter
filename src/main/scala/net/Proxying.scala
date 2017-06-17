@@ -3,7 +3,7 @@ package net
 
 import com.eddsteel.feedfilter.model.ConditionalGetHeader
 import xml.XmlFilter
-import model.{FeedFilter, SuccessResponse, Feed, Unchanged}
+import model.{Feed, FeedFilter, SuccessResponse, Unchanged}
 import model.Errors._
 
 import cats.Show

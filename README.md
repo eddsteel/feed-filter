@@ -51,7 +51,7 @@ Support redirects, and it's about time we use proper logging.
 
 ## ~~Slice 5: Configuration file for above~~
 ## ~~Slice 6: Build improvements~~
-## ~~Slice 7: Support conditional get (pass through cache headers)~~
+## ~~Slice 7/8: Support conditional get (pass through cache headers)~~
 
 
 ## Notes
