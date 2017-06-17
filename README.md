@@ -1,8 +1,10 @@
-# Feed Filter
+# Feed Filter Proxy
 
-Proxy atom feeds, applying filters to their contents. Filter out
+Proxy atom/rss feeds, applying filters to their contents. Filter out
 items, but include all original data for the channel, and all
 remaining items.
+
+Supports redirects and conditional gets and not much else.
 
 [![Build Status](https://travis-ci.org/eddsteel/feed-filter.svg?branch=master)](https://travis-ci.org/eddsteel/feed-filter)
 
@@ -49,7 +51,7 @@ Support redirects, and it's about time we use proper logging.
 
 ## ~~Slice 5: Configuration file for above~~
 ## ~~Slice 6: Build improvements~~
-## Slice 7: Support partial get (pass through cache headers)
+## ~~Slice 7: Support conditional get (pass through cache headers)~~
 
 
 ## Notes

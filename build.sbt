@@ -1,7 +1,7 @@
 name := "feed-filter"
 scalaVersion := "2.12.2"
 organization := "eddsteel"
-version := "slice6"
+version := "slice7"
 
 List(Compile -> "com.eddsteel.feedfilter.net.Jetty", Test -> "com.eddsteel.feedfilter.Main").map {
   case (scope, main) =>

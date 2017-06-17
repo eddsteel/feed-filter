@@ -1,8 +1,9 @@
 package com.eddsteel.feedfilter
 package net
 
+import com.eddsteel.feedfilter.model.ConditionalGetHeader
 import xml.XmlFilter
-import model.FeedFilter
+import model.{FeedFilter, SuccessResponse, Feed, Unchanged}
 import model.Errors._
 
 import cats.Show
@@ -18,52 +19,72 @@ object Proxying {
   private val logger = org.log4s.getLogger
   type FetchResult[A] = EitherT[Future, FetchError, A]
 
-  def proxy[A: Show](feedFilter: FeedFilter[A])(
-    implicit ec: ExecutionContext): EitherT[Future, ProxyError, String] =
-    fetch(feedFilter.src, 0).flatMap { s =>
-      EitherT(Future.successful(XmlFilter(ItemFilter.filterItem(_, feedFilter))(s).filter))
+  def proxy[A: Show](headers: List[(String, String)], feedFilter: FeedFilter[A])(
+    implicit ec: ExecutionContext): EitherT[Future, ProxyError, SuccessResponse] =
+    fetch(feedFilter.src, headers, 0).flatMap {
+      case Feed(headers, feed) =>
+        EitherT(Future.successful({
+          XmlFilter(ItemFilter.filterItem(_, feedFilter))(feed).filter.map {
+            Feed(headers, _)
+          }
+        }))
+      case unchanged @ Unchanged =>
+        EitherT.pure[Future, ProxyError, SuccessResponse](unchanged)
     }
 
-  def fetch(u: URI, chainLength: Int)(implicit ec: ExecutionContext): FetchResult[String] = {
+  /** A successful `None` indicates a conditional get with an "unchanged" response. */
+  def fetch(u: URI, headers: List[(String, String)], chainLength: Int)(
+    implicit ec: ExecutionContext): FetchResult[SuccessResponse] = {
     logger.info(s"FETCH $u")
-    def left(e: FetchError): EitherT[Future, FetchError, String] =
+    def left(e: FetchError): EitherT[Future, FetchError, SuccessResponse] =
       EitherT.left(Future.successful(e))
 
     if (chainLength > 3)
       left(TooManyRedirects(u))
     else {
+      val request = headers.foldLeft(Http(u.toString)) {
+        case (req, header @ (key, value)) =>
+          logger.debug(s"Adding conditional header: $header")
+          req.header(key, value)
+      }
+
       val resp: FetchResult[HttpResponse[String]] = EitherT.right(Future {
         blocking {
-          Http(u.toString).asString
+          request.asString
         }
       })
 
-      val result: FetchResult[String] = resp.flatMap { resp =>
+      val result: FetchResult[SuccessResponse] = resp.flatMap { resp =>
         val body = resp.body
 
-        if (resp.code === 200)
-          EitherT.pure[Future, FetchError, String](body)
-        else
-          resp.code match {
-            case 301 =>
-              val nextLocation =
-                for {
-                  location <- resp
-                    .header("Location")
-                    .toRight(ServerFailedError("301 with no Location"))
-                  validLocation <- Try(new URI(location)).toOption
-                    .toRight(ServerFailedError("301 with invalid Location"))
-                } yield validLocation
+        resp.code match {
+          case 200 =>
+            val headers = ConditionalGetHeader.collectFromResponse(resp.headers)
+            logger.debug(s"Including conditional headers: $headers")
+            EitherT.pure[Future, FetchError, SuccessResponse](Feed(headers, body))
 
-              nextLocation.fold(left, fetch(_, chainLength + 1))
-            case 404 => left(NotFoundError(u))
-            case 500 => left(ServerFailedError(body))
-            case c => left(UnhandledHttpCodeError(c))
-          }
+          case 304 =>
+            EitherT.pure[Future, FetchError, SuccessResponse](Unchanged)
+
+          case 301 =>
+            val nextLocation =
+              for {
+                location <- resp
+                  .header("Location")
+                  .toRight(ServerFailedError("301 with no Location"))
+                validLocation <- Try(new URI(location)).toOption
+                  .toRight(ServerFailedError("301 with invalid Location"))
+              } yield validLocation
+
+            nextLocation.fold(left, fetch(_, headers, chainLength + 1))
+          case 404 => left(NotFoundError(u))
+          case 500 => left(ServerFailedError(body))
+          case c => left(UnhandledHttpCodeError(c))
+        }
       }
 
       EitherT(result.value.recover {
-        case e => Left[FetchError, String](UnhandledFetchError(e))
+        case e => Left[FetchError, SuccessResponse](UnhandledFetchError(e))
       })
     }
   }

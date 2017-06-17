@@ -1,7 +1,7 @@
 package com.eddsteel.feedfilter
 package net
 
-import model.FeedFilter
+import model.{ConditionalGetHeader, FeedFilter}
 import model.Errors._
 
 import cats.implicits._
@@ -26,26 +26,34 @@ object Servlet extends ScalatraServlet with FutureSupport {
 
   get("/feed/:name") {
     val feedName = params("name")
+    val conditionalGetHeaders =
+      ConditionalGetHeader.collectFromRequest(request.headers).map(_.toHttpHeader)
+
     feeds.get(feedName) match {
       case Some(feed: FeedFilter[String]) =>
-        Proxying.proxy(feed).value.map {
-          case Right(result) =>
-            Ok(result)
+        Proxying.proxy(conditionalGetHeaders, feed).value.map {
+          case Right(Feed(headers, result)) =>
+            logger.info("OK")
+            Ok(result, headers = headers.map(_.toHttpHeader).toMap)
+
+          case Right(Unchanged) =>
+            logger.info("NM")
+            NotModified
 
           case Left(NotFoundError(u)) =>
-            logger.error(s"$u not found")
+            logger.error(s"KO $u not found")
             NotFound(s"$u not found")
 
           case Left(TooManyRedirects(u)) =>
-            logger.error(s"$u caused too many redirects")
+            logger.error(s"KO $u caused too many redirects")
             ActionResult(ResponseStatus(310, "Too many redirects"), "", Map.empty)
 
           case Left(e) =>
-            logger.error(s"Failed with $e")
+            logger.error(s"KO Failed with $e")
             InternalServerError
         }
       case None =>
-        logger.error(s"Can't find feed ($feedName)")
+        logger.error(s"KO Can't find feed ($feedName)")
         Future.successful(NotFound(feedName))
     }
   }

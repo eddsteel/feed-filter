@@ -18,7 +18,7 @@ object Main {
 
     val _ = Await.result({
       Future.traverse(feeds) { feed =>
-        val res = Proxying.proxy(feed).value
+        val res = Proxying.proxy(List(), feed).value
         res
       }
     }, 10 seconds)
