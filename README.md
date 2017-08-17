@@ -52,8 +52,9 @@ Support redirects, and it's about time we use proper logging.
 ## ~~Slice 5: Configuration file for above~~
 ## ~~Slice 6: Build improvements~~
 ## ~~Slice 7/8: Support conditional get (pass through cache headers)~~
-## Slice 9: Dockerhub deployment through travis
-Also switch to alpine-scala
+## ~~Slice 9: Docker streamline~~
+Use alpine-scala, remove Makefile (SBT gets it all), update travis to
+deploy through to docker hub.
 
 ## Notes
 
