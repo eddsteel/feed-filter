@@ -20,6 +20,5 @@ script:
   - find $HOME/.sbt -name "*.lock" | xargs rm
   - find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
   # Make container and push
-  - make container
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-  - make push
+  - sbt docker:publish
