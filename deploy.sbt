@@ -5,3 +5,4 @@ packageSummary in Docker := "A feed proxying service"
 packageDescription := "A feed proxying service"
 dockerExposedPorts := List(8080)
 dockerBaseImage := "frolvlad/alpine-scala"
+dockerUpdateLatest := true

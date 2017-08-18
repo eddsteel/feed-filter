@@ -55,6 +55,8 @@ Support redirects, and it's about time we use proper logging.
 ## ~~Slice 9: Docker streamline~~
 Use alpine-scala, remove Makefile (SBT gets it all), update travis to
 deploy through to docker hub.
+## ~~Slice 10: Latest everything~~
+Update all the lib versions, tag/publish latest container, and make service file always use it.
 
 ## Notes
 
