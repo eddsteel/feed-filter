@@ -8,7 +8,7 @@ ExecStartPre=-/usr/bin/docker kill feed-filter
 ExecStartPre=-/usr/bin/docker rm feed-filter
 ExecStartPre=-/usr/bin/docker pull feed-filter:latest
 Restart=always
-ExecStart=/usr/bin/docker run -d --name feed-filter -p 8080:8080 feed-filter:latest
+ExecStart=/usr/bin/docker run -i --name feed-filter -p 8080:8080 feed-filter:latest
 ExecStop=/usr/bin/docker stop -t 5 feedfilter
 
 [Install]
