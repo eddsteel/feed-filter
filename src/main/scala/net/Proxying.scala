@@ -29,7 +29,7 @@ object Proxying {
           }
         }))
       case unchanged @ Unchanged =>
-        EitherT.pure[Future, ProxyError, SuccessResponse](unchanged)
+        EitherT.pure[Future, ProxyError](unchanged)
     }
 
   /** A successful `None` indicates a conditional get with an "unchanged" response. */
@@ -61,10 +61,10 @@ object Proxying {
           case 200 =>
             val headers = ConditionalGetHeader.collectFromResponse(resp.headers)
             logger.debug(s"Including conditional headers: $headers")
-            EitherT.pure[Future, FetchError, SuccessResponse](Feed(headers, body))
+            EitherT.pure[Future, FetchError](Feed(headers, body))
 
           case 304 =>
-            EitherT.pure[Future, FetchError, SuccessResponse](Unchanged)
+            EitherT.pure[Future, FetchError](Unchanged)
 
           case 301 =>
             val nextLocation =

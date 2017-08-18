@@ -26,10 +26,11 @@ object FeedItem {
   def fromXML(s: String): Parsed = {
     val xml = handleSax(XML.loadString(s"<root>$s</root>")).toEither
     xml.flatMap { doc =>
-      val validated = (handleAttr[String]((doc \ "guid").text)("guid") |@|
-        handleAttr[String]((doc \ "title").text)("title") |@|
-        handleAttr[String]((doc \ "link").text)("link").map(new URI(_)) |@|
-        handleAttr[String]((doc \ "description").text)("description")).map(FeedItem.apply _)
+      val validated = (
+        handleAttr[String]((doc \ "guid").text)("guid"),
+        handleAttr[String]((doc \ "title").text)("title"),
+        handleAttr[String]((doc \ "link").text)("link").map(new URI(_)),
+        handleAttr[String]((doc \ "description").text)("description")).mapN(FeedItem.apply _)
 
       val end: Parsed = validated.leftMap(FeedItemMarshalError.apply).toEither
       end
