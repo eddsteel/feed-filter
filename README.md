@@ -58,6 +58,9 @@ deploy through to docker hub.
 ## ~~Slice 10: Latest everything~~
 Update all the lib versions, tag/publish latest container, and make service file always use it.
 
+## ~~Slice 11: http4s~~
+
+
 ## Notes
 
 Main thing is not to lose information, so can't use a library that

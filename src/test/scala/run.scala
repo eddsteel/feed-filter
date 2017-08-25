@@ -7,7 +7,7 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.language.postfixOps
 
-object Main {
+object TestMain {
   private implicit val ec = ExecutionContext.global
 
   def main(args: Array[String]): Unit = {

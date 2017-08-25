@@ -5,20 +5,28 @@ import Instances._
 
 import cats.Show
 import cats.implicits._
+import org.http4s.Headers
+import org.http4s.Header
+import org.http4s.headers._
 
 sealed trait ConditionalGetHeader extends Product with Serializable {
   def toHttpHeader: (String, String)
 }
 
+// TODO make use of http4s headers with CaseInsensitiveString
 object ConditionalGetHeader {
-  def collectFromRequest(headers: Map[String, String]): List[ConditionalGetHeader] =
+
+  private val logger = org.log4s.getLogger
+
+  def collectFromRequest(headers: Headers): List[ConditionalGetHeader] =
     headers.toList.collect {
-      case ("If-Match", etag: String) => IfMatch(etag): ConditionalGetHeader
-      case ("If-None-Match", etag: String) => IfMatch(etag)
-      case ("If-Modified-Since", HttpDateish(d)) => IfModifiedSince(d)
-      case ("If-Unmodified-Since", HttpDateish(d)) => IfUnmodifiedSince(d)
-      case ("If-Range", anything: String) => IfRange(anything)
-    }
+      case Header(`If-Match`.name, etag) => Some(IfMatch(etag)): Option[ConditionalGetHeader]
+      case Header(`If-None-Match`.name, etag: String) => Some(IfMatch(etag))
+      case Header(`If-Modified-Since`.name, HttpDateish(d)) => Some(IfModifiedSince(d))
+      case Header(`If-Unmodified-Since`.name, HttpDateish(d)) => Some(IfUnmodifiedSince(d))
+      case Header(`If-Range`.name, anything: String) => Some(IfRange(anything))
+      case x => logger.debug(s"!!! Skipping $x"); None
+    }.map(_.toList).flatten
 
   def collectFromResponse(headers: Map[String, Seq[String]]): List[ConditionalGetHeader] =
     headers.toList.collect {
