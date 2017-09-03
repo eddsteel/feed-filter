@@ -1,12 +1,11 @@
 package com.eddsteel.feedfilter
 package model
 
-import cats.Show
 import java.net.URI
 
 /** Represents a filter definition.
   */
-final case class FeedFilter[A: Show](
+final case class FeedFilter[A](
   name: String,
   src: URI,
   extract: FeedItemExtractor[A],

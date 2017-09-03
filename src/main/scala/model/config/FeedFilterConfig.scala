@@ -3,7 +3,6 @@ package model.config
 
 import com.eddsteel.feedfilter.model._
 import model.FeedFilter
-import cats.implicits._
 
 import java.net.URI
 import scala.util.matching.Regex

@@ -8,16 +8,12 @@ import cats.instances.string._
 import org.http4s._
 import org.http4s.dsl._
 import org.log4s
-import fs2.{Strategy, Task}
-
-import scala.concurrent.ExecutionContext
+import fs2.Task
 
 object Service {
   private val logger = log4s.getLogger
 
-  def create(feeds: Map[String, FeedFilter[String]])(
-    implicit ec: ExecutionContext,
-    s: Strategy): HttpService =
+  def create(feeds: Map[String, FeedFilter[String]]): HttpService =
     HttpService {
 
       case GET -> Root / "feed" / "feed-filter.service" =>
@@ -29,15 +25,14 @@ object Service {
         feeds.get(name) match {
           case Some(feed) =>
             val conditionalGetHeaders =
-              ConditionalGetHeader.collectFromRequest(request.headers).map(_.toHttpHeader)
+              ConditionalGetHeader.filterFromRequest(request.headers)
 
-            def proxied = Proxying.proxy(conditionalGetHeaders, feed).value
+            def proxied = Proxying.proxy(conditionalGetHeaders, feed)
 
-            Task.fromFuture(proxied).flatMap {
-              case Right(Feed(_, result)) =>
+            proxied.value.flatMap {
+              case Right(Feed(headers, result)) =>
                 logger.info("OK")
-                val rawHeaders = conditionalGetHeaders.map { case (k, v) => Header(k, v) }
-                Ok(result).putHeaders(rawHeaders: _*)
+                Ok(result).putHeaders(headers.toSeq: _*)
 
               case Right(Unchanged) =>
                 logger.info("NM")

@@ -1,14 +1,16 @@
 package com.eddsteel.feedfilter
 
 import net._
-import cats.implicits._
 
-import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionContext, Future}
-import scala.language.postfixOps
+import cats.implicits._
+import org.http4s._
+import fs2._
+
+import scala.concurrent.ExecutionContext
 
 object TestMain {
-  private implicit val ec = ExecutionContext.global
+  private val strategy =
+    Strategy.fromExecutionContext(ExecutionContext.global)
 
   def main(args: Array[String]): Unit = {
     val feeds = FeedFilters.allFeeds match {
@@ -16,12 +18,13 @@ object TestMain {
       case Right(fs) => fs
     }
 
-    val _ = Await.result({
-      Future.traverse(feeds) { feed =>
-        val res = Proxying.proxy(List(), feed).value
-        res
-      }
-    }, 10 seconds)
-    ()
+    val _ =
+      Task
+        .parallelTraverse(feeds) { feed =>
+          val res = Proxying.proxy(Headers.empty, feed).value
+          res
+        }(strategy)
+        .map(_.mkString("\n"))
+        .unsafeRun
   }
 }

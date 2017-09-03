@@ -10,6 +10,7 @@ object Errors {
   sealed trait ProxyError extends Product with Serializable
 
   sealed trait FetchError extends ProxyError
+  final case class BadUriError(url: String) extends FetchError
   final case class NotFoundError(url: URI) extends FetchError
   final case class ServerFailedError(reason: String) extends FetchError
   final case class TooManyRedirects(uri: URI) extends FetchError

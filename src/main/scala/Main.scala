@@ -7,9 +7,7 @@ import org.http4s.HttpService
 import org.http4s.server.blaze.BlazeBuilder
 import org.http4s.util.StreamApp
 import org.log4s
-import fs2.{Strategy, Stream, Task}
-
-import scala.concurrent.ExecutionContext.global
+import fs2.{Stream, Task}
 
 object Main extends StreamApp {
 
@@ -26,7 +24,7 @@ object Main extends StreamApp {
   }
 
   private val service: HttpService =
-    Service.create(feeds)(global, Strategy.fromExecutionContext(global))
+    Service.create(feeds)
 
   def stream(args: List[String]): Stream[Task, Nothing] =
     BlazeBuilder.bindHttp(8080, "0.0.0.0").mountService(service, "/").serve

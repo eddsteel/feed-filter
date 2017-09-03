@@ -22,6 +22,7 @@ libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-blaze-client" % "0.17.0"
 )
 libraryDependencies += "co.fs2" %% "fs2-core" % "0.9.7"
+libraryDependencies += "co.fs2" %% "fs2-cats" % "0.3.0"
 
 Lint.settings
 Flags.settings
