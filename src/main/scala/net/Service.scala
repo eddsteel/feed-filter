@@ -16,7 +16,7 @@ object Service {
   def create(feeds: Map[String, FeedFilter[String]]): HttpService =
     HttpService {
 
-      case GET -> Root / "feed" / "feed-filter.service" =>
+      case GET -> Root / "feed-filter.service" =>
         StaticFile.fromResource("/feed-filter.service").value.flatMap { maybeOk =>
           maybeOk.map(Task.now).getOrElse(NotFound())
         }
