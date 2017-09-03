@@ -59,7 +59,8 @@ deploy through to docker hub.
 Update all the lib versions, tag/publish latest container, and make service file always use it.
 
 ## ~~Slice 11: http4s~~
-
+Move server and client HTTP operations to http4s/cats/fs2, simplify. Serve
+feed-filter.service to make systemd/docker deployment easier.
 
 ## Notes
 

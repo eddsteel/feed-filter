@@ -12,16 +12,16 @@ fork in run := true
 
 libraryDependencies += "org.scalaj" %% "scalaj-http" % "2.3.0"
 libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.0.6"
-libraryDependencies += "org.typelevel" %% "cats-core" % "1.0.0-MF"
+libraryDependencies += "org.typelevel" %% "cats-core" % "0.9.0"
 libraryDependencies += "org.log4s" %% "log4s" % "1.3.4"
 libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.7.5"
 libraryDependencies += "net.jcazevedo" %% "moultingyaml" % "0.4.0"
 libraryDependencies ++= Seq(
-  "org.http4s" %% "http4s-dsl" % "0.16.0a-M1",
-  "org.http4s" %% "http4s-blaze-server" % "0.16.0a-M1",
-  "org.http4s" %% "http4s-blaze-client" % "0.16.0a-M1"
+  "org.http4s" %% "http4s-dsl" % "0.17.0",
+  "org.http4s" %% "http4s-blaze-server" % "0.17.0",
+  "org.http4s" %% "http4s-blaze-client" % "0.17.0"
 )
-libraryDependencies += "io.verizon.delorean" %% "core" % "1.2.40-scalaz-7.1"
+libraryDependencies += "co.fs2" %% "fs2-core" % "0.9.7"
 
 Lint.settings
 Flags.settings

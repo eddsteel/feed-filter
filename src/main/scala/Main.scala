@@ -3,15 +3,15 @@ package com.eddsteel.feedfilter
 import net.Service
 import model.FeedFilter
 
-import org.http4s.server.blaze._
-import org.http4s.util.ProcessApp
+import org.http4s.HttpService
+import org.http4s.server.blaze.BlazeBuilder
+import org.http4s.util.StreamApp
 import org.log4s
-import scalaz.concurrent.Task
-import scalaz.stream.Process
+import fs2.{Strategy, Stream, Task}
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext.global
 
-object Main extends ProcessApp {
+object Main extends StreamApp {
 
   private val logger = log4s.getLogger
 
@@ -25,9 +25,9 @@ object Main extends ProcessApp {
       sys.error(s"BAIL $errors")
   }
 
-  private val service = Service.create(feeds)
+  private val service: HttpService =
+    Service.create(feeds)(global, Strategy.fromExecutionContext(global))
 
-  @SuppressWarnings(Array("org.wartremover.warts.Overloading"))
-  override def main(args: List[String]): Process[Task, Nothing] =
-    BlazeBuilder.bindHttp(8080, "localhost").mountService(service, "/").serve
+  def stream(args: List[String]): Stream[Task, Nothing] =
+    BlazeBuilder.bindHttp(8080, "0.0.0.0").mountService(service, "/").serve
 }

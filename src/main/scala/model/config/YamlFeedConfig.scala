@@ -20,11 +20,10 @@ final case class YamlFeedConfig(name: String, src: URI, extract: String, rule: M
       ruleConfig <- RuleConfig.fromFields(ruleType, rule).toRight(UnknownFeedFilterRule(rule))
     } yield ruleConfig).toValidated
 
-    (
-      name.validNel[ConfigParseError],
-      src.validNel[ConfigParseError],
-      ExtractorChoice.fromString(extract).toValidNel(UnknownFeedItemExtractor(extract)),
-      validatedRule.toValidatedNel).mapN(FeedConfig.apply _)
+    (name.validNel[ConfigParseError] |@|
+      src.validNel[ConfigParseError] |@|
+      ExtractorChoice.fromString(extract).toValidNel(UnknownFeedItemExtractor(extract)) |@|
+      validatedRule.toValidatedNel).map(FeedConfig.apply _)
   }
 }
 

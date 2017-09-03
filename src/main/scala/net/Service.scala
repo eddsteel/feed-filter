@@ -5,19 +5,25 @@ import model._
 import model.Errors._
 
 import cats.instances.string._
-import delorean._
 import org.http4s._
 import org.http4s.dsl._
 import org.log4s
-import scalaz.concurrent.Task
+import fs2.{Strategy, Task}
 
 import scala.concurrent.ExecutionContext
 
 object Service {
   private val logger = log4s.getLogger
 
-  def create(feeds: Map[String, FeedFilter[String]])(implicit ec: ExecutionContext): HttpService =
+  def create(feeds: Map[String, FeedFilter[String]])(
+    implicit ec: ExecutionContext,
+    s: Strategy): HttpService =
     HttpService {
+
+      case GET -> Root / "feed" / "feed-filter.service" =>
+        StaticFile.fromResource("/feed-filter.service").value.flatMap { maybeOk =>
+          maybeOk.map(Task.now).getOrElse(NotFound())
+        }
 
       case request @ GET -> Root / "feed" / name =>
         feeds.get(name) match {
@@ -27,7 +33,7 @@ object Service {
 
             def proxied = Proxying.proxy(conditionalGetHeaders, feed).value
 
-            proxied.toTask.flatMap {
+            Task.fromFuture(proxied).flatMap {
               case Right(Feed(_, result)) =>
                 logger.info("OK")
                 val rawHeaders = conditionalGetHeaders.map { case (k, v) => Header(k, v) }
