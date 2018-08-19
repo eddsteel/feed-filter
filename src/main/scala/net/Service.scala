@@ -21,6 +21,10 @@ object Service {
           maybeOk.map(Task.now).getOrElse(NotFound())
         }
 
+      case GET -> Root / "ruok" =>
+        logger.info("OK")
+        Ok("imok")
+
       case request @ GET -> Root / "feed" / name =>
         feeds.get(name) match {
           case Some(feed) =>
