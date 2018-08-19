@@ -1,0 +1,15 @@
+[Unit]
+Description=Feed filter service
+Requires=docker.service
+After=docker.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker kill feed-filter
+ExecStartPre=-/usr/bin/docker rm feed-filter
+ExecStartPre=-/usr/bin/docker pull eddsteel/feed-filter:latest
+Restart=always
+ExecStart=/usr/bin/docker run -i --name feed-filter -p 8080:8080 eddsteel/feed-filter:latest
+ExecStop=/usr/bin/docker stop -t 5 feed-filter
+
+[Install]
+WantedBy=local.target
