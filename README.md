@@ -64,7 +64,11 @@ turn wart remover on full.
 
 Serve feed-filter.service to make manual systemd/docker deployment easier.
 
-## Slice 12: XML stream
+## Slice 12: Healthcheck
+
+At [/ruok](localhost:8080/ruok).
+
+## Slice 13: XML stream
 
 Move from consuming the whole back-end feed before filtering to a
 fully stream-based approach.
