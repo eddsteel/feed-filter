@@ -52,6 +52,9 @@ class XmlFilter private (source: String, itemFilter: FeedItem => Boolean) {
       case (r, EvEntityRef(ref)) =>
         r.map(_.append(s"&$ref;"))
 
+      case (r, EvComment(comment)) =>
+        r.map(_.append(s"<!-- $comment -->"))
+
       case (_, ev) =>
         Left[XmlFilteringError, XmlPartialOutput](UnhandledStreamEvent(ev))
     }
