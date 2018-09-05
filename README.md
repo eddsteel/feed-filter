@@ -64,14 +64,16 @@ turn wart remover on full.
 
 Serve feed-filter.service to make manual systemd/docker deployment easier.
 
-## Slice 12: Healthcheck
+## v0-slice12: Healthcheck, dynamic version, bugfix
 
-At [/ruok](localhost:8080/ruok).
+- Add [/ruok](localhost:8080/ruok) healthcheck
+- Use the sbt-dynver plugin
+- Fix issue with XML comments
 
-## Slice 13: XML stream
+## v0-slice13: XML stream
 
 Move from consuming the whole back-end feed before filtering to a
-fully stream-based approach.
+fully stream-based approach, if it seems worthwhile.
 
 
 ## Notes
