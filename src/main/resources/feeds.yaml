@@ -12,3 +12,10 @@
   rule:
     type: filter-not
     matcher: "\\bsit(s|ting)? in for (mark|simon|kermode|mayo)\\b| presents "
+
+- name: e1
+  src: http://feeds.soundcloud.com/users/soundcloud:users:320774653/sounds.rss
+  extract: title
+  rule:
+    type: filter-not
+    matcher: "^e[12] preview "
