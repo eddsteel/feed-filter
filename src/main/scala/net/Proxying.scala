@@ -37,6 +37,7 @@ object Proxying {
         EitherT.pure[Task, ProxyError, SuccessResponse](unchanged)
     }
 
+  @SuppressWarnings(Array("org.wartremover.warts.Recursion")) // that's what chain length is for.
   def fetch(u: URI, headers: Headers, chainLength: Int): FetchResult[SuccessResponse] = {
     logger.info(s"FETCH $u")
 
@@ -84,7 +85,7 @@ object Proxying {
               nextLocation.fold(left, fetch(_, headers, chainLength + 1).value)
             case Status(404) => left(NotFoundError(u))
             case Status(500) => body.flatMap(b => left(ServerFailedError(b)))
-            case s => left(UnhandledHttpCodeError(s.code))
+            case s           => left(UnhandledHttpCodeError(s.code))
           }
         })
       }

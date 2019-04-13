@@ -7,7 +7,11 @@ import net.jcazevedo.moultingyaml._
 
 import java.net.URI
 
-final case class YamlFeedConfig(name: String, src: URI, extract: String, rule: Map[String, String]) {
+final case class YamlFeedConfig(
+  name: String,
+  src: URI,
+  extract: String,
+  rule: Map[String, String]) {
 
   @SuppressWarnings(
     Array(
@@ -32,7 +36,9 @@ object YamlFeedConfig extends DefaultYamlProtocol {
     def write(u: URI) = YamlString(u.toString)
     def read(value: YamlValue) = value match {
       case YamlString(s) =>
-        try { new URI(s) } catch {
+        try {
+          new URI(s)
+        } catch {
           case _: Throwable => deserializationError(s"Expected valid URI, but got $s")
         }
       case y =>

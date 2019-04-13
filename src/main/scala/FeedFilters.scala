@@ -16,7 +16,7 @@ object FeedFilters {
     def accumulate[L, R](in: List[ValidatedNel[L, R]]): Either[NonEmptyList[L], List[R]] = {
       val (lefts, rights) = in.foldRight((List.empty[L], List.empty[R])) {
         case (Invalid(es), (ls, rs)) => (es.toList ++ ls, rs)
-        case (Valid(r), (ls, rs)) => (ls, r :: rs)
+        case (Valid(r), (ls, rs))    => (ls, r :: rs)
       }
 
       lefts match {
