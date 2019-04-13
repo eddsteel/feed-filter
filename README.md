@@ -64,7 +64,7 @@ turn wart remover on full.
 
 Serve feed-filter.service to make manual systemd/docker deployment easier.
 
-## v0-slice12: Healthcheck, dynamic version, bugfix
+## ~~v0-slice12: Healthcheck, dynamic version, bugfix~~
 
 - Add [/ruok](localhost:8080/ruok) healthcheck
 - Use the sbt-dynver plugin
