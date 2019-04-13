@@ -18,4 +18,4 @@
   extract: title
   rule:
     type: filter-not
-    matcher: "^e[12] preview "
+    matcher: "^e[12] preview|\\[preview\\]|\\[patreon exclusive\\]"
