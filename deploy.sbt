@@ -6,3 +6,5 @@ packageDescription := "A feed proxying service"
 dockerExposedPorts := List(8080)
 dockerBaseImage := "frolvlad/alpine-scala"
 dockerUpdateLatest := true
+daemonUserUid in Docker := None
+daemonUser in Docker := "daemon"
