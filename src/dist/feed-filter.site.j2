@@ -1,0 +1,13 @@
+server {
+        ssl_certificate  /etc/letsencrypt/live/{{ env("CERT_NAME") }}/fullchain.pem;
+        ssl_certificate_key  /etc/letsencrypt/live/{{ env("CERT_NAME") }}/privkey.pem;
+
+        ssl_session_timeout  5m;
+
+        listen   80; ## listen for ipv4
+        listen   443 ssl;
+        server_name  feedfilter.{{ env("HOST") }};
+        location / {
+                proxy_pass http://localhost:8086;
+        }
+}

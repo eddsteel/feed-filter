@@ -1,0 +1,13 @@
+[Unit]
+Description=Feed Filter
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/opt/feedfilter/bin/feedfilter
+KillMode=process
+TimeoutSec=180
+Environment=FEEDS=/opt/feedfilter/etc/feeds.yaml
+
+[Install]
+WantedBy=network.target

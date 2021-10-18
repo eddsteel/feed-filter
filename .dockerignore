@@ -1,7 +1,0 @@
-target
-project/target
-project/project/target
-
-.metals
-.ensime_cache
-.git

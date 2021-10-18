@@ -1,0 +1,35 @@
+feeds:
+  - name: chapo
+    href: https://feeds.soundcloud.com/users/soundcloud:users:211911700/sounds.rss
+    rule: |
+      return episode["title"].find("Teaser") == -1
+  - name: wittertainment
+    href: https://podcasts.files.bbci.co.uk/b00lvdrj.rss
+    rule: |
+      return all(
+        [episode["description"].find("sits in for") == -1,
+        episode["description"].find("sit in for") == -1,
+        episode["description"].find("sitting in for") == -1,
+        episode["description"].find(" presents the show") == -1])
+  - name: e1
+    href: https://feeds.soundcloud.com/users/soundcloud:users:320774653/sounds.rss
+    rule: |
+      return all([
+        episode["title"].find("e1 preview") == -1,
+        episode["title"].find("e2 preview") == -1])
+  - name: ybs
+    href: https://feeds.soundcloud.com/users/soundcloud:users:341089232/sounds.rss
+    rule: |
+      return not(episode["title"].endswith("[Patreon Preview]"))
+  - name: champagnesharks
+    href: http://champagnesharks.blubrry.net/feed/podcast/
+    rule: |
+      return not(episode["title"].startsWith("Teaser Preview"))
+  - name: trueanon
+    href: https://feeds.soundcloud.com/users/soundcloud:users:672423809/sounds.rss
+    rule: |
+      return not(any([
+        episode["title"].endswith(" (teaser)"),
+        episode["title"].endswith(" (trailer)"),
+        episode["title"].endswith(" [teaser]"),
+        episode["title"].endswith(" teaser")]))
