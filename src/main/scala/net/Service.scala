@@ -16,10 +16,8 @@ object Service {
   def create(feeds: Map[String, FeedFilter[String]]): HttpService =
     HttpService {
 
-      case GET -> Root / "feed-filter.service" =>
-        StaticFile.fromResource("/feed-filter.service").value.flatMap { maybeOk =>
-          maybeOk.map(Task.now).getOrElse(NotFound())
-        }
+      case GET -> Root =>
+        Ok(BuildInfo.toString)
 
       case GET -> Root / "ruok" =>
         logger.info("OK")
@@ -31,7 +29,7 @@ object Service {
             val conditionalGetHeaders =
               ConditionalGetHeader.filterFromRequest(request.headers)
 
-            def proxied = Proxying.proxy(conditionalGetHeaders, feed)
+            val proxied = Proxying.proxy(conditionalGetHeaders, feed)
 
             proxied.value.flatMap {
               case Right(Feed(headers, result)) =>

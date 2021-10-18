@@ -11,7 +11,7 @@
   extract: description
   rule:
     type: filter-not
-    matcher: "\\bsit(s|ting)? in for (mark|simon|kermode|mayo)\\b| presents "
+    matcher: "\\bsit(s|ting)? in for (mark|simon|kermode|mayo)\\b| presents the show"
 
 - name: e1
   src: http://feeds.soundcloud.com/users/soundcloud:users:320774653/sounds.rss
@@ -19,3 +19,24 @@
   rule:
     type: filter-not
     matcher: "^e[12] preview|\\[preview\\]|\\[patreon exclusive\\]"
+
+- name: yeahbutstill
+  src: http://feeds.soundcloud.com/users/soundcloud:users:341089232/sounds.rss
+  extract: title
+  rule:
+    type: filter-not
+    matcher: "\\[Patreon Preview\\]$"
+
+- name: champagnesharks
+  src: http://champagnesharks.blubrry.net/feed/podcast/
+  extract: title
+  rule:
+    type: filter-not
+    matcher: "^Teaser Preview for CS"
+
+- name: trueanon
+  src: http://feeds.soundcloud.com/users/soundcloud:users:672423809/sounds.rss
+  extract: title
+  rule:
+    type: filter-not
+    matcher: " (teaser)$"

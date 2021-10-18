@@ -5,9 +5,11 @@ import model.FeedItem
 import model.Errors._
 import cats.implicits._
 
-import scala.io.Source
 import scala.xml._
 import scala.xml.pull._
+
+import javax.xml.stream.{ XMLInputFactory, XMLEventReader, XMLStreamConstants }
+import javax.xml.stream.events.XMLEvent
 
 /** XML filtering is gross. Hidden here.
   */
@@ -19,7 +21,12 @@ class XmlFilter private (source: String, itemFilter: FeedItem => Boolean) {
     else name
 
   def filter: Either[XmlFilteringError, String] = {
-    val eventReader = new XMLEventReader(Source.fromString(source))
+    val eventReader = {
+      val factory = XMLInputFactory.newFactory
+      val reader = factory.createXMLEventReader(new ByteArrayInputStream(source.getBytes()))
+      factory.createFilteredReader(reader, ev => !ev.isStartDocument &&
+        ev.getEventType != XMLStreamConstants.DTD && !(ev.isCharacters && ev.asCharacters.isIgnorableWhiteSpace))
+    }
 
     val out: IntermediateParse = eventReader.foldLeft(XmlPartialOutput.empty) {
       case (l @ Left(_), _) => l

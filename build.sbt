@@ -1,5 +1,5 @@
 name := "feed-filter"
-scalaVersion := "2.12.3"
+scalaVersion := "2.13.1"
 organization := "eddsteel"
 
 List(Compile -> "com.eddsteel.feedfilter.Main", Test -> "com.eddsteel.feedfilter.TestMain").map {
@@ -9,19 +9,24 @@ List(Compile -> "com.eddsteel.feedfilter.Main", Test -> "com.eddsteel.feedfilter
 
 fork in run := true
 
-libraryDependencies += "org.scalaj" %% "scalaj-http" % "2.3.0"
-libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.0.6"
-libraryDependencies += "org.typelevel" %% "cats-core" % "0.9.0"
-libraryDependencies += "org.log4s" %% "log4s" % "1.3.4"
+libraryDependencies += "org.scalaj" %% "scalaj-http" % "2.4.2"
+libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "2.0.1"
+libraryDependencies += "org.log4s" %% "log4s" % "1.10.0"
 libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.7.5"
-libraryDependencies += "net.jcazevedo" %% "moultingyaml" % "0.4.0"
+libraryDependencies += "net.jcazevedo" %% "moultingyaml" % "0.4.2"
 libraryDependencies ++= Seq(
-  "org.http4s" %% "http4s-dsl" % "0.17.0",
-  "org.http4s" %% "http4s-blaze-server" % "0.17.0",
-  "org.http4s" %% "http4s-blaze-client" % "0.17.0"
+  "org.http4s" %% "http4s-dsl" % "1.0.0-M25",
+  "org.http4s" %% "http4s-blaze-server" % "1.0.0-M25",
+  "org.http4s" %% "http4s-blaze-client" % "1.0.0-M25"
 )
-libraryDependencies += "co.fs2" %% "fs2-core" % "0.9.7"
-libraryDependencies += "co.fs2" %% "fs2-cats" % "0.3.0"
+libraryDependencies += "co.fs2" %% "fs2-core" % "3.1.2"
 
 Lint.settings
 Flags.settings
+
+lazy val root = (project in file(".")).
+  enablePlugins(BuildInfoPlugin).
+  settings(
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoPackage := "com.eddsteel.feedfilter.model"
+  )
